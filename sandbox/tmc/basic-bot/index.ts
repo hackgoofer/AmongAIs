@@ -7,6 +7,7 @@ dotenv.config();
 
 const { GATHER_API_KEY, SPACE_ID } = process.env;
 const { OPENAI_API_KEY } = process.env;
+const { BOT_NAME } = process.env;
 
 if (!GATHER_API_KEY) {
   throw new Error("Missing the GATHER_API_KEY in env");
@@ -16,6 +17,9 @@ if (!SPACE_ID) {
 }
 if (!OPENAI_API_KEY) {
   throw new Error("Missing the OPENAI_API_KEY in env");
+}
+if (!BOT_NAME) {
+  throw new Error("Missing the BOT_NAME in env");
 }
 
 // create openai client
@@ -87,24 +91,25 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
         game.move(MoveDirection.Dance);
         break;
       default:
-        game.chat(message.senderId, [], "", { contents: 'foobar' });
+        const completion = await chatCompletion(message.contents);
+        game.chat(message.senderId, [], "", { contents: `${completion.message.content}` });
     }
   } else {
     // do something
     const completion = await chatCompletion(message.contents);
     game.chat("GLOBAL_CHAT", [], "", { contents: `${completion.message.content}`});
-    // game.chat(message.senderId, [], "", { contents: 'foobar' });
   }
 });
 
 // name and status setup
 setTimeout(() => {
   console.log("setting name and status");
+
   if (game.engine) {
     game.engine.sendAction({
       $case: "setName",
       setName: {
-        name: "tmc-bot",
+        name: BOT_NAME,
       },
     });
     game.engine.sendAction({
