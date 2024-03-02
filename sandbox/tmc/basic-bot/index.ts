@@ -75,10 +75,10 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
     }
   } else {
     // do something
-    game.chat("LOCAL_CHAT", [], "", { contents: "hi!" });
     const completion = await chatCompletion(message.contents);
+    game.chat("GLOBAL_CHAT", [], "", { contents: "bot speak" });
     // console.log("completion", completion);
-    // game.chat("LOCAL_CHAT", [], "", { contents: completion });
+    game.chat("GLOBAL_CHAT", [], "", { contents: `${completion}` });
     // game.chat(message.senderId, [], "", { contents: 'foobar' });
   }
 });
