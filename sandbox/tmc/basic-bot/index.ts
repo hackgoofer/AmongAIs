@@ -1,19 +1,39 @@
 import { Game, MoveDirection } from "@gathertown/gather-game-client";
 global.WebSocket = require("isomorphic-ws");
-
 import dotenv from "dotenv";
+import OpenAI from "openai";
+
 dotenv.config();
 
 const { GATHER_API_KEY, SPACE_ID } = process.env;
+const { OPENAI_API_KEY } = process.env;
 
 if (!GATHER_API_KEY) {
-  throw new Error("Missing the GATHER_API_KEY in .env file");
+  throw new Error("Missing the GATHER_API_KEY in env");
+}
+if (!SPACE_ID) {
+  throw new Error("Missing the SPACE_ID in env");
+}
+if (!OPENAI_API_KEY) {
+  throw new Error("Missing the OPENAI_API_KEY in env");
 }
 
-if (!SPACE_ID) {
-  throw new Error("Missing the SPACE_ID in .env file");
+// create openai client
+const openai = new OpenAI();
+
+async function chatCompletion(input: string) {
+  const completion = await openai.chat.completions.create({
+    messages: [
+      {"role": "system", "content": "You are a rad ai in a space station."},
+      {"role": "user", "content": input},
+    ],
+    model: "gpt-4-turbo-preview",
+  });
+  // TODO: if we want to synthesize audio we would stream and start synthesizing.
+  return completion.choices[0];
 }
-// setup
+
+// Game client setup.
 const game = new Game(SPACE_ID, () =>
   Promise.resolve({ apiKey: GATHER_API_KEY })
 );
@@ -26,10 +46,12 @@ game.subscribeToEvent("playerMoves", (data, _context) => {
 });
 
 // listen for chats and move
-game.subscribeToEvent("playerChats", (data, _context) => {
+game.subscribeToEvent("playerChats", async (data, _context) => {
   console.log('[Event] "playerChats"', data);
   game.move(MoveDirection.Dance);
   const message = data.playerChats;
+  console.log("playerChat", data);
+
   if (message.messageType === "DM") {
     // do something
     switch (message.contents.toLowerCase()) {
@@ -51,6 +73,13 @@ game.subscribeToEvent("playerChats", (data, _context) => {
       default:
         game.chat(message.senderId, [], "", { contents: 'foobar' });
     }
+  } else {
+    // do something
+    game.chat("LOCAL_CHAT", [], "", { contents: "hi!" });
+    const completion = await chatCompletion(message.contents);
+    // console.log("completion", completion);
+    // game.chat("LOCAL_CHAT", [], "", { contents: completion });
+    // game.chat(message.senderId, [], "", { contents: 'foobar' });
   }
 });
 
@@ -61,7 +90,7 @@ setTimeout(() => {
     game.engine.sendAction({
       $case: "setName",
       setName: {
-        name: "bot1",
+        name: "example bot",
       },
     });
     game.engine.sendAction({
