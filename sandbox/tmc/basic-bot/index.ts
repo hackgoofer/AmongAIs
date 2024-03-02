@@ -51,6 +51,7 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
   game.move(MoveDirection.Dance);
   const message = data.playerChats;
   console.log("playerChat", data);
+  console.log("playerChat", _context);
 
   if (message.messageType === "DM") {
     // do something
@@ -76,9 +77,7 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
   } else {
     // do something
     const completion = await chatCompletion(message.contents);
-    game.chat("GLOBAL_CHAT", [], "", { contents: "bot speak" });
-    // console.log("completion", completion);
-    game.chat("GLOBAL_CHAT", [], "", { contents: `${completion}` });
+    game.chat("GLOBAL_CHAT", [], "", { contents: completion.message.content });
     // game.chat(message.senderId, [], "", { contents: 'foobar' });
   }
 });
