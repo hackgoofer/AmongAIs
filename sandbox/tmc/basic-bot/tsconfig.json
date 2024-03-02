@@ -8,5 +8,8 @@
     "lib": ["es2019", "dom"]
   },
   "include": ["./**/*"],
-  "references": []
+  "references": [],
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
 }
