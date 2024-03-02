@@ -37,21 +37,36 @@ async function chatCompletion(input: string) {
 const game = new Game(SPACE_ID, () =>
   Promise.resolve({ apiKey: GATHER_API_KEY })
 );
-game.connect(); // replace with your spaceId of choice
-game.subscribeToConnection((connected) => console.log("connected?", connected));
+let CurrentPlayerId = "";
+game.connect();
+game.subscribeToConnection((connected) => {
+  console.log("players", game.players);
+  console.log("connected?", connected);
+});
 
 // print game events
-game.subscribeToEvent("playerMoves", (data, _context) => {
-  console.log('[Event] "move"', data);
+// game.subscribeToEvent("playerMoves", (data, _context) => {
+//   console.log('[Event] "move"', data);
+// });
+game.subscribeToEvent("playerJoins", async (data, _context) => {
+  if (data.playerJoins.encId == 1) {
+    // This is the authed player!
+    CurrentPlayerId = `${game.getPlayerUidFromEncId(data.playerJoins.encId)}`;
+    console.log("CurrentPlayerId", CurrentPlayerId);
+  }
 });
+
 
 // listen for chats and move
 game.subscribeToEvent("playerChats", async (data, _context) => {
   console.log('[Event] "playerChats"', data);
-  game.move(MoveDirection.Dance);
   const message = data.playerChats;
-  console.log("playerChat", data);
-  console.log("playerChat", _context);
+
+  if (message.senderId === CurrentPlayerId) {
+    // don't respond to our own messages
+    console.log("ignoring our own message");
+    return;
+  }
 
   if (message.messageType === "DM") {
     // do something
@@ -77,7 +92,7 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
   } else {
     // do something
     const completion = await chatCompletion(message.contents);
-    game.chat("GLOBAL_CHAT", [], "", { contents: completion.message.content });
+    game.chat("GLOBAL_CHAT", [], "", { contents: `${completion.message.content}`});
     // game.chat(message.senderId, [], "", { contents: 'foobar' });
   }
 });
@@ -89,7 +104,7 @@ setTimeout(() => {
     game.engine.sendAction({
       $case: "setName",
       setName: {
-        name: "example bot",
+        name: "tmc-bot",
       },
     });
     game.engine.sendAction({
