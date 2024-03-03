@@ -91,7 +91,7 @@ async function chatCompletion(input: string, inventory_items: string[] = []) {
       orientation: 0,
       normal: 'https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/HonPfzx7iBQ4ZuHa-R6gg',
       highlighted: '',
-      type: 6,
+      type: 5,
       width: 1,
       height: 2,
       previewMessage: 'custom object',
@@ -101,6 +101,7 @@ async function chatCompletion(input: string, inventory_items: string[] = []) {
       zIndex: 803,
       // properties: [Object]
     }
+    game.addObject(`${GATHER_MAP_ID}`, mynewobject);
     me!.inventory.items["newId"+ new_item.name] = mynewobject
 
 
