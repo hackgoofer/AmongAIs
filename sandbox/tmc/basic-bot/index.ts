@@ -441,7 +441,7 @@ const ItemAssets = {
     normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4",
   },
   [ItemType.Cat]: {
-    normal: "https://storage.googleapis.com/tmc.dev/img/E90781AE-F353-4D15-97AE-0221966D350D.png",
+    normal: "https://storage.googleapis.com/tmc.dev/img/cat.png",
   },
 }
 
