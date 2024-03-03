@@ -221,7 +221,7 @@ eventList.forEach((event: any) => {
 // game.subscribeToEvent("playerMoves", (data, _context) => {
 //   console.log('[Event] "move"', data);
 // });
-
+var initialized = false
 game.subscribeToEvent("playerJoins", async (data, _context) => {
   if (data.playerJoins.encId == 1) {
     // This is the authed player!
@@ -257,6 +257,10 @@ let hasPlaced = false
 
 // listen for chats and move
 game.subscribeToEvent("playerChats", async (data, _context) => {
+  if (!initialized) {
+    initializeGameState();
+    initialized = true;
+  }
 
   if (!hasPlaced) {
 
@@ -519,3 +523,54 @@ function jitter(num: number, range: number) {
 //   const randomDirection = directions[Math.floor(Math.random() * directions.length)];
 //   game.move(randomDirection);
 // }, 2000);
+
+function createMapObject(id: string, name: string, tags: string[], url: string): MapObject {
+  return {
+    id: id,
+    _name: name,
+    x: jitter(game.players[CurrentPlayerId].x, 10),
+    y: jitter(game.players[CurrentPlayerId].y, 10),
+    offsetX: 31.533918380737305,
+    offsetY: 1.5382612943649292,
+    color: "#9193A6",
+    orientation: 0,
+    normal: url,
+    highlighted: "",
+    type: 0,
+    width: 1,
+    height: 1,
+    zIndex: 806
+  };
+}
+
+
+function initializeGameState() {
+  const elements: { [id: string]: MapObject } = {
+    "cat": createMapObject("Cat1x1 - r3WuvM6QzzI9XLBUe6Rtj", "CAT", ["animal", "cat"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/OG412cvS9W1jYefT1CcoM9"),
+    "rock": createMapObject("Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj", "ROCK", ["nature", "rock"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4"),
+    "metal": createMapObject("Metal1x1 - r3WuvM6QzzI9XLBUe6Rtj", "METAL", ["metal"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/GabCBoR5H1MUQKOZpHIhab"),
+    "earth": createMapObject("Earth1x1 - r3WuvM6QzzI9XLBUe6Rtj", "EARTH", ["earth"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/wiPxBnKS4wELTY0Y3mOQUN"),
+    "fire": createMapObject("Fire1x1 - r3WuvM6QzzI9XLBUe6Rtj", "FIRE", ["fire"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/F6I2zufurOkrObFcSGFWTZ"),
+    "heart": createMapObject("Heart1x1 - r3WuvM6QzzI9XLBUe6Rtj", "HEART", ["heart"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/IXZYPsbDLyi-phXFmdEne")
+  };
+
+  const players = game.getPlayersInMap(GATHER_MAP_ID);
+  console.log("INITIALIZING players count", players.length);
+  players.forEach(player => {
+    console.log("Player Name: ", player.name);
+  });
+  players.forEach(player => {
+    if (!player!.name.endsWith("bot")) {
+      const inventory = player.inventory;
+      const items = Object.keys(elements);
+      const randomIndex = Math.floor(Math.random() * items.length);
+      items.splice(randomIndex, 1);
+      items.forEach(item => {
+        const object = elements[item]
+        console.log("Adding item to inventory", object);
+        console.log(object);
+        player.inventory.items[object['id']] = object;
+      });
+    }
+  });
+}
