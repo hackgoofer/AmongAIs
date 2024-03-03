@@ -440,7 +440,7 @@ enum ItemType {
   Rock,
   Fern,
   Fish,
-  Unknown,
+  Wine,
 }
 
 const ItemAssets = {
@@ -452,6 +452,9 @@ const ItemAssets = {
   },
   [ItemType.Fish]: {
     normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/yui1plkt7r0MFbdYS2IUL",
+  },
+  [ItemType.Wine]: {
+    normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/iNeqoBHsVind3FPKlBm_k",
   },
 }
 
