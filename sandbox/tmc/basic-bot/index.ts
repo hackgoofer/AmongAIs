@@ -142,8 +142,10 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
         game.move(MoveDirection.Dance);
         break;
       default: 
+        game.setEmote("💭");
         const completion = await chatCompletion(message.contents);
         game.chat(message.senderId, [], "", { contents: `${completion.message.content}` });
+        game.setEmote("");
     }
   } else if (message.recipient === "LOCAL_CHAT") {
     game.setEmote("💭");
