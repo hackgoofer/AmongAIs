@@ -60,6 +60,9 @@ game.subscribeToEvent("playerJoins", async (data, _context) => {
   }
 });
 
+game.subscribeToEvent("playerSetsEmoteV2", (data, _context) => {
+  console.log('[Event] "playerSetsEmoteV2"', data);
+});
 
 // listen for chats and move
 game.subscribeToEvent("playerChats", async (data, _context) => {
@@ -72,6 +75,7 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
     return;
   }
 
+  console.log("messageType:", message.messageType);
   if (message.messageType === "DM") {
     // do something
     switch (message.contents.toLowerCase()) {
@@ -95,9 +99,10 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
         game.chat(message.senderId, [], "", { contents: `${completion.message.content}` });
     }
   } else {
-    // do something
+    game.setEmote("💭");
     const completion = await chatCompletion(message.contents);
     game.chat("GLOBAL_CHAT", [], "", { contents: `${completion.message.content}`});
+    game.setEmote("");
   }
 });
 
