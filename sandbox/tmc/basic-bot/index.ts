@@ -145,10 +145,10 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
         const completion = await chatCompletion(message.contents);
         game.chat(message.senderId, [], "", { contents: `${completion.message.content}` });
     }
-  } else {
+  } else if (message.recipient === "LOCAL_CHAT") {
     game.setEmote("💭");
     const completion = await chatCompletion(message.contents);
-    game.chat("GLOBAL_CHAT", [], "", { contents: `${completion.message.content}`});
+    game.chat("LOCAL_CHAT", [], "", { contents: `${completion.message.content}`});
     game.setEmote("");
   }
 });
