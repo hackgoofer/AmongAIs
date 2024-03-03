@@ -106,7 +106,7 @@ async function chatCompletion(input: string, inventory_items: string[] = []) {
     // game.addObject(`${GATHER_MAP_ID}`, mynewobject);
     me!.inventory.items["newId"+ new_item.name] = mynewobject
 
-    addItem(randomItemType(), me!);
+    // If we want to drop it, we need a CDN-working image and to call: addItem(randomItemType(), me!);
 
     // synthesize alt response
     // completion.choices[0].message.content will be null
@@ -173,8 +173,6 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
     removeItem(objectKey);
     return;
   }
-
-  addItem(randomItemType(), context.player!);
 
   // if(playerTriggersItem.closestObjectTemplate && playerTriggersItem.closestObjectTemplate === "Special Object"){
   //     let {mapId, obj} = game.getObject(playerTriggersItem.closestObject!)!;
