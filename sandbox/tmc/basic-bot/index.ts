@@ -140,7 +140,16 @@ interface ObjectHolder {
 
 let objects: ObjectHolder = {};
 game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
-  console.log("interact", obj);
+  const playerInteractsWithObject = obj.playerInteractsWithObject;
+  const objectKey = playerInteractsWithObject["key"]
+
+  // check removeOnInteract:
+  if (context.map!.objects[objectKey].properties.removeOnInteract) {
+    removeItem(objectKey);
+    // TODO: add to inv
+    return;
+  }
+
   if (context.player!.itemString && objects[context.playerId!]) {
     let temp = objects[context.playerId!]
     let newObj = {
@@ -152,8 +161,6 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
     game.setObject(temp.mapId, temp.obj!.id!, newObj)
   }
 
-  const playerInteractsWithObject = obj.playerInteractsWithObject;
-  const objectKey = playerInteractsWithObject["key"]
   console.log(context.player!.itemString)
   console.log(objects[context.playerId!])
   console.log("before inventory")
@@ -441,7 +448,7 @@ const ItemAssets = {
     normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4",
   },
   [ItemType.Cat]: {
-    normal: "https://storage.googleapis.com/tmc.dev/img/cat.png",
+    normal: "https://replicate.delivery/pbxt/fit8ofEuUXoMfpEEFx35r7yMkiLfXadqmfI5tMxBskVvtTlTC/output.png",
   },
 }
 
@@ -450,6 +457,7 @@ function randomItemType(): ItemType {
 }
 
 function addItem(itemType: ItemType, player: Partial<Player>) {
+  const id = Math.random().toString(36).substring(7);
   // add near player:
   const x = jitter(player.x! || game.players[CurrentPlayerId].x, 3);
   const y = jitter(player.y! || game.players[CurrentPlayerId].y, 3);
@@ -465,16 +473,31 @@ function addItem(itemType: ItemType, player: Partial<Player>) {
     orientation: 0,
     normal: ItemAssets[itemType].normal,
     highlighted: '',
+    id: id,
     type: 5,
     previewMessage: `I'm a ${ItemType[itemType]}!`,
     width: 1,
     height: 1,
+    distThreshold: 2,
     properties: {
+      message: `${itemType}`,
       itemType: `${itemType}`,
       removeOnInteract: true,
     },
     zIndex: 806
   });
+}
+
+function removeItem(objectKey: string) {
+  // send "mapDeleteObjectByKey"
+  game.sendAction({
+    $case: "mapDeleteObjectByKey",
+    mapDeleteObjectByKey: {
+      mapId: `${GATHER_MAP_ID}`,
+      key: objectKey,
+    },
+  });
+
 }
 
 function jitter(num: number, range: number) {
