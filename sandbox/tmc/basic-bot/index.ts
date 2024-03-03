@@ -1,4 +1,6 @@
 import { Game, MoveDirection, MapObject } from "@gathertown/gather-game-client";
+import { Player } from "@gathertown/gather-game-common/dist/src/public/player";
+
 global.WebSocket = require("isomorphic-ws");
 import dotenv from "dotenv";
 import OpenAI from "openai";
@@ -97,15 +99,14 @@ async function chatCompletion(input: string, inventory_items: string[] = []) {
       previewMessage: 'custom object',
       distThreshold: 5,
       id: 'water - QGSCUNlONJ9K6aJNPjDK_410f7df5-518b-450d-9a5e-d744cc25fb79',
-      objectPlacerId: 'XMtE7QpdxoUiQsVVWvHcMvIfpPK2',
+      objectPlacerId: 'XMtE7QpdxoUiQsVVWvHcMvIfpPK2', // TODO: set to paleyr id
       zIndex: 803,
       // properties: [Object]
     }
-    game.addObject(`${GATHER_MAP_ID}`, mynewobject);
+    // game.addObject(`${GATHER_MAP_ID}`, mynewobject);
     me!.inventory.items["newId"+ new_item.name] = mynewobject
 
-
-
+    addItem(ItemType.Rock, me!);
 
     // synthesize alt response
     // completion.choices[0].message.content will be null
@@ -162,7 +163,7 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
     console.log("added inventory: " + objectKey);
   }
   console.log("added inventory: " + objectKey)
-  addRock(context.player!);
+  addItem(ItemType.Rock, context.player!);
   console.log("end inventory")
   console.log(context.player!.inventory)
 
@@ -425,10 +426,24 @@ setTimeout(() => {
   // });
 }, 4000); // wait two seconds before setting these just to give the game a chance to init
 
-function addRock(player: any) {
+enum ItemType {
+  Rock,
+  Tree,
+  Water,
+  Fire,
+  Unknown,
+}
+
+const ItemAssets = {
+  [ItemType.Rock]: {
+    normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4",
+  },
+}
+
+function addItem(itemType: ItemType, player: Partial<Player>) {
   // add near player:
-  const x = jitter((player || game.players[CurrentPlayerId]).x, 3);
-  const y = jitter((player || game.players[CurrentPlayerId]).y, 3);
+  const x = jitter(player.x! || game.players[CurrentPlayerId].x, 3);
+  const y = jitter(player.y! || game.players[CurrentPlayerId].y, 3);
   game.addObject(`${GATHER_MAP_ID}`, {
     _tags: ["nature", "rock"],
     templateId: "Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj",
@@ -439,12 +454,15 @@ function addRock(player: any) {
     offsetY: 1.5382612943649292,
     color: "#9193A6",
     orientation: 0,
-    normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4",
-    highlighted: "",
-    type: 0,
+    normal: ItemAssets[itemType].normal,
+    highlighted: '',
+    type: 5,
+    previewMessage: 'press x!',
     width: 1,
     height: 1,
-    //propertiesJson: "{}",
+    properties: {
+      foo: "bar",
+    },
     zIndex: 806
   });
 }
