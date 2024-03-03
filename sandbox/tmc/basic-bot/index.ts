@@ -162,6 +162,7 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
     console.log("added inventory: " + objectKey);
   }
   console.log("added inventory: " + objectKey)
+  addRock(context.player!);
   console.log("end inventory")
   console.log(context.player!.inventory)
 
@@ -420,16 +421,14 @@ setTimeout(() => {
     // dump map context as JSON:
     // game.partialMaps
     //console.log("game.partialMaps", JSON.stringify(game.partialMaps, null, 2));
-
-    addRock();
   }
   // });
 }, 4000); // wait two seconds before setting these just to give the game a chance to init
 
-function addRock() {
+function addRock(player: any) {
   // add near player:
-  const x = jitter(game.players[CurrentPlayerId].x, 3);
-  const y = jitter(game.players[CurrentPlayerId].y, 3);
+  const x = jitter((player || game.players[CurrentPlayerId]).x, 3);
+  const y = jitter((player || game.players[CurrentPlayerId]).y, 3);
   game.addObject(`${GATHER_MAP_ID}`, {
     _tags: ["nature", "rock"],
     templateId: "Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj",
