@@ -159,8 +159,8 @@ function getPlayerInventory(playerId: string) {
 }
 
 // Function to convert inventory items to their names
-function inventoryItemToNames(inventoryItems: any[]) {
-  return inventoryItems.map(item => item._name);
+function inventoryItemToNames(inventoryItems: Record<string, Object>): string[] {
+  return Object.values(inventoryItems).map((item: any) => item._name);
 }
 
 
@@ -170,12 +170,13 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
   console.log('[Event] "playerChats"', data);
   const message = data.playerChats;
   const players = game.getPlayersInMap(GATHER_MAP_ID)
-  console.log("players", players);
-  const player = players.filter((player) => {
-    player.id === message.senderId;
+  // console.log("message", message);
+  // console.log("players", players);
+  const player = players.find((player) => {
+    return player.id === message.senderId;
   })
-  console.log("player", player);
-  const inventory = player.inventory;
+  // console.log("player", player);
+  const inventory = player!.inventory;
 
   if (message.senderId === CurrentPlayerId) {
     // don't respond to our own messages
@@ -184,7 +185,7 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
   }
   console.log("inventory", inventory);
   
-  console.log("messageType:", message.messageType);
+  // console.log("messageType:", message.messageType);
   if (message.messageType === "DM") {
     // do something
     switch (message.contents.toLowerCase()) {
