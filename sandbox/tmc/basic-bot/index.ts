@@ -106,7 +106,7 @@ async function chatCompletion(input: string, inventory_items: string[] = []) {
     // game.addObject(`${GATHER_MAP_ID}`, mynewobject);
     me!.inventory.items["newId"+ new_item.name] = mynewobject
 
-    addItem(ItemType.Rock, me!);
+    addItem(randomItemType(), me!);
 
     // synthesize alt response
     // completion.choices[0].message.content will be null
@@ -140,6 +140,7 @@ interface ObjectHolder {
 
 let objects: ObjectHolder = {};
 game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
+  console.log("interact", obj);
   if (context.player!.itemString && objects[context.playerId!]) {
     let temp = objects[context.playerId!]
     let newObj = {
@@ -163,7 +164,7 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
     console.log("added inventory: " + objectKey);
   }
   console.log("added inventory: " + objectKey)
-  addItem(ItemType.Rock, context.player!);
+  addItem(randomItemType(), context.player!);
   console.log("end inventory")
   console.log(context.player!.inventory)
 
@@ -428,8 +429,9 @@ setTimeout(() => {
 
 enum ItemType {
   Rock,
-  Tree,
   Water,
+  SiameseCat,
+  Cat,
   Fire,
   Unknown,
 }
@@ -438,6 +440,13 @@ const ItemAssets = {
   [ItemType.Rock]: {
     normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4",
   },
+  [ItemType.Cat]: {
+    normal: "https://storage.googleapis.com/tmc.dev/img/E90781AE-F353-4D15-97AE-0221966D350D.png",
+  },
+}
+
+function randomItemType(): ItemType {
+  return Math.random() < 0.5 ? ItemType.Rock : ItemType.Cat;
 }
 
 function addItem(itemType: ItemType, player: Partial<Player>) {
@@ -445,9 +454,9 @@ function addItem(itemType: ItemType, player: Partial<Player>) {
   const x = jitter(player.x! || game.players[CurrentPlayerId].x, 3);
   const y = jitter(player.y! || game.players[CurrentPlayerId].y, 3);
   game.addObject(`${GATHER_MAP_ID}`, {
-    _tags: ["nature", "rock"],
-    templateId: "Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj",
-    _name: "Rock (1x1)",
+    _tags: [],
+    // templateId: "Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj",
+    _name: "new item",
     x: x,
     y: y,
     offsetX: 31.533918380737305,
@@ -457,11 +466,12 @@ function addItem(itemType: ItemType, player: Partial<Player>) {
     normal: ItemAssets[itemType].normal,
     highlighted: '',
     type: 5,
-    previewMessage: 'press x!',
+    previewMessage: `I'm a ${ItemType[itemType]}!`,
     width: 1,
     height: 1,
     properties: {
-      foo: "bar",
+      itemType: `${itemType}`,
+      removeOnInteract: true,
     },
     zIndex: 806
   });
