@@ -73,7 +73,7 @@ async function chatCompletion(input: string, inventory_items: string[] = []) {
     const new_item = JSON.parse(completion.choices[0].message.tool_calls[0].function.arguments) // has shape of {name: str, emoji: str}
 
     console.log("new_item", new_item)
-    const me = game.getPlayersInMap(GATHER_MAP_ID!).find(player => player.id === "slEVKm61QVfcdoVqtScDoFZvM3k2")
+    const me = game.getPlayersInMap(GATHER_MAP_ID!).find(player => player.id === CurrentPlayerId)
     const mynewobject = {
       // _tags: [Array],
       // templateId: 'ArborVitae - _QGSCUNlONJ9K6aJNPjDK',
@@ -246,7 +246,7 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
     // temporary: manually add items for swyx. SWYXTODO
 
     console.log("game.completeMaps", game.completeMaps)
-    const me = game.getPlayersInMap(GATHER_MAP_ID).find(player => player.id === "slEVKm61QVfcdoVqtScDoFZvM3k2")
+    const me = game.getPlayersInMap(GATHER_MAP_ID).find(player => player.id === CurrentPlayerId)
 
     // me!.inventory.order[objectKey] = Object.keys(me!.inventory.items).length;
 
