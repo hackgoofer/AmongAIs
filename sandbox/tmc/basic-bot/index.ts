@@ -29,10 +29,10 @@ if (!GATHER_MAP_ID) {
 // create openai client
 const openai = new OpenAI();
 
-async function chatCompletion(input: string, inventory_itmes: string[] = []) {
+async function chatCompletion(input: string, inventory_items: string[] = []) {
   const completion = await openai.chat.completions.create({
     messages: [
-      {"role": "system", "content": `You are a rad ai in a space station. In your inventory, you have: ${inventory_itmes.join(', ')}.`},
+      {"role": "system", "content": `You are a rad ai in a space station. In your inventory, you have: ${inventory_items.length ? inventory_items.join(', ') : 'nothing!'}.`},
       {"role": "user", "content": input},
     ],
     model: "gpt-4-turbo-preview",
