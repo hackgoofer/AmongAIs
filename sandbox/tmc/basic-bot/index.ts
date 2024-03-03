@@ -6,25 +6,30 @@ import { ChatCompletionMessageParam, ChatCompletionTool } from "openai/resources
 
 dotenv.config();
 
-const { GATHER_API_KEY, SPACE_ID } = process.env;
-const { OPENAI_API_KEY } = process.env;
-const { BOT_NAME } = process.env;
-const { GATHER_MAP_ID } = process.env;
+let {
+  GATHER_API_KEY,
+  SPACE_ID,
+  OPENAI_API_KEY,
+  BOT_NAME,
+  GATHER_MAP_ID,
+} = process.env;
 
+if (!BOT_NAME) {
+  // use last 3 of random number to avoid name conflicts:
+  BOT_NAME = `bot-${Math.random().toString(36).substring(10)}`;
+}
+if (!SPACE_ID) {
+  SPACE_ID = "Pliup4gqrF7l4Ypa\\spc-station"
+}
+if (!GATHER_MAP_ID) {
+  // note: AKA room id
+  GATHER_MAP_ID = "office-space-medium"
+}
 if (!GATHER_API_KEY) {
   throw new Error("Missing the GATHER_API_KEY in env");
 }
-if (!SPACE_ID) {
-  throw new Error("Missing the SPACE_ID in env");
-}
 if (!OPENAI_API_KEY) {
   throw new Error("Missing the OPENAI_API_KEY in env");
-}
-if (!BOT_NAME) {
-  throw new Error("Missing the BOT_NAME in env");
-}
-if (!GATHER_MAP_ID) {
-  throw new Error("Missing the MAP_ID in env");
 }
 
 // create openai client
