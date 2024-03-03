@@ -7,10 +7,10 @@ require('dotenv').config()
 
 const apiKey = process.env.GATHER_API_KEY as string
 const mapId = process.env.GATHER_MAP_ID as string
-const spaceId = process.env.GATHER_SPACE_ID?.replace('/', '\\')
+const spaceId = process.env.SPACE_ID?.replace('/', '\\')
 
 global.WebSocket = IsomorphicWS;
-const game = new Game(spaceId, () => Promise.resolve({ apiKey }));
+const game = new Game(`${spaceId}`, () => Promise.resolve({ apiKey }));
 game.connect();
 game.subscribeToConnection((connected) => {
   if (!connected) {
@@ -20,7 +20,7 @@ game.subscribeToConnection((connected) => {
 
   console.log('Connected!')
   initializeInteractionStates(mapId)
-  game.subscribeToEvent("playerInteracts", onPlayerInteraction);
+  game.subscribeToEvent("playerInteractsWithObject", onPlayerInteraction);
   game.subscribeToEvent("playerMoves", onPlayerMoves);
 });
 

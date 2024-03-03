@@ -1,4 +1,4 @@
-import { Game, MoveDirection } from "@gathertown/gather-game-client";
+import { Game, MoveDirection, MapObject } from "@gathertown/gather-game-client";
 global.WebSocket = require("isomorphic-ws");
 import dotenv from "dotenv";
 import OpenAI from "openai";
@@ -41,6 +41,7 @@ async function chatCompletion(input: string) {
 const game = new Game(SPACE_ID, () =>
   Promise.resolve({ apiKey: GATHER_API_KEY })
 );
+
 let CurrentPlayerId = "";
 game.connect();
 game.subscribeToConnection((connected) => {
@@ -48,10 +49,55 @@ game.subscribeToConnection((connected) => {
   console.log("connected?", connected);
 });
 
+interface ObjectHolder{
+  [playerId:string]:{
+      mapId: string,
+      obj:MapObject|undefined
+  }
+}
+
+let objects:ObjectHolder = {};
+
+
+const eventList = [
+  "info", "warn", "error", "ready", "serverHeartbeat", "transactionStatus", "playerMoves", "playerSetsStatus", "playerSpotlights", "playerRings", "playerChats", "playerGhosts", 
+  "playerEntersWhisper", "playerLeavesWhisper", "playerActivelySpeaks", "playerSetsName", "playerSetsTextStatus", 
+  "playerSetsEmojiStatus", "playerSetsAffiliation", "playerExits", "playerSetsIsSignedIn", "spaceOverwrites", 
+  "spaceIsClosed", "playerEntersPortal", "spaceSetsIdMapping", "playerSetsLastActive", "playerShootsConfetti", 
+  "playerSetsEventStatus", "playerSetsInConversation", "playerSetsCurrentArea", "playerSetsImagePointer", 
+  "cookieFound", "playerEntersWhisperV2", "playerSetsGoKartId", "mapSetDimensions", "mapSetBackgroundImagePath", 
+  "mapSetForegroundImagePath", "mapSetSpawns", "mapSetPortals", "mapSetAnnouncer", "mapSetAssets", "mapSetName", 
+  "mapSetMuteOnEntry", "mapSetUseDrawnBG", "mapSetWalls", "mapSetFloors", "mapSetAreas", "mapSetSpawn", 
+  "playerSetsIsAlone", "playerJoins", "mapSetEnabledChats", "mapSetDescription", "mapSetDecoration", 
+  "mapSetTutorialTasks", "mapSetMiniMapImagePath", "spacePlaysSound", "mapSetScript", "playerSetsIsMobile", 
+  "setScreenPointerServer", "playerSetsEmoteV2", "playerSetsFocusModeEndTime", "spaceSetsSpaceMembers", 
+  "spaceSetsSpaceUsers", "customEvent", "playerBlocks", "playerUpdatesFocusModeStatus", "playerNotifies", 
+  "playerSetsItemString", "playerSetsFollowTarget", "playerRequestsToLead", "playerSetsManualVideoSrc", 
+  "playerSetsIsNpc", "playerSetsSubtitle", "mapCommitsChanges", "mapMoveObject", "playerEditsChatMessage", 
+  "fxShakeObject", "fxShakeCamera", "playerSendsCommand", "spaceRegistersCommand", "speakerUpdatesSession", 
+  "playerUpdatesInventory", "spaceUpdatesItems", "playerSetsVehicleId", "playerSetsSpeedModifier", "playerHighFives", 
+  "spaceStopsSound", "hipToBeSquare", "playerCrafts", "playerTriggersInventoryItem", "playerSetsAllowScreenPointer", 
+  "precomputedEnterLocation", "gotRequestMute", "playerSetsDeskInfo", "mapSetNooks", "dynamicGates", "playerWaves", 
+  "playerSetsPronouns", "playerSetsTitle", "playerSetsTimezone", "playerSetsDescription", "playerSetsPhone", 
+  "playerSetsPersonalImageUrl", "playerSetsProfileImageUrl", "spaceSetsCapacity", "spaceOverCapacityDeniesUser", 
+  "playerSetsAway", "mapSetCollisionsBits", "playerSetsCity", "playerSetsCountry", "playerSetsStartDate", 
+  "playerStartsRecording", "accessRequestsUpdated", "accessRequestRespondedTo", "spaceSetsGuestPassStatuses", 
+  "playerSetsAvailability", "subscriptionsUpdated", "spaceRolePermissionOverrideUpdated", "playerSetsLastRaisedHand", 
+  "playerSetsCurrentlyEquippedWearables", "playerSetsDisplayEmail", "mapDeleteObjectByKey", "mapSetObjectsV2", 
+  "playerInteractsWithObject", "playerTriggersObject", "chimeSetsUserInfo", "playerChangesMaps"
+];
+
+eventList.forEach((event: any) => {
+  game.subscribeToEvent(event as "info" | "warn" | "error" | "ready" | "serverHeartbeat" | "transactionStatus" | "playerMoves" | "playerSetsStatus" | "playerSpotlights" | "playerRings" | "playerChats" | "playerGhosts" | "playerEntersWhisper" | "playerLeavesWhisper" | "playerActivelySpeaks" | "playerSetsName" | "playerSetsTextStatus" | "playerSetsEmojiStatus" | "playerSetsAffiliation" | "playerExits" | "playerSetsIsSignedIn" | "spaceOverwrites" | "spaceIsClosed" | "playerEntersPortal" | "spaceSetsIdMapping" | "playerSetsLastActive" | "playerShootsConfetti" | "playerSetsEventStatus" | "playerSetsInConversation" | "playerSetsCurrentArea" | "playerSetsImagePointer" | "cookieFound" | "playerEntersWhisperV2" | "playerSetsGoKartId" | "mapSetDimensions" | "mapSetBackgroundImagePath" | "mapSetForegroundImagePath" | "mapSetSpawns" | "mapSetPortals" | "mapSetAnnouncer" | "mapSetAssets" | "mapSetName" | "mapSetMuteOnEntry" | "mapSetUseDrawnBG" | "mapSetWalls" | "mapSetFloors" | "mapSetAreas" | "mapSetSpawn" | "playerSetsIsAlone" | "playerJoins" | "mapSetEnabledChats" | "mapSetDescription" | "mapSetDecoration" | "mapSetTutorialTasks" | "mapSetMiniMapImagePath" | "spacePlaysSound" | "mapSetScript" | "playerSetsIsMobile" | "setScreenPointerServer" | "playerSetsEmoteV2" | "playerSetsFocusModeEndTime" | "spaceSetsSpaceMembers" | "spaceSetsSpaceUsers" | "customEvent" | "playerBlocks" | "playerUpdatesFocusModeStatus" | "playerNotifies" | "playerSetsItemString" | "playerSetsFollowTarget" | "playerRequestsToLead" | "playerSetsManualVideoSrc" | "playerSetsIsNpc" | "playerSetsSubtitle" | "mapCommitsChanges" | "mapMoveObject" | "playerEditsChatMessage" | "fxShakeObject" | "fxShakeCamera" | "playerSendsCommand" | "spaceRegistersCommand" | "speakerUpdatesSession" | "playerUpdatesInventory" | "spaceUpdatesItems" | "playerSetsVehicleId" | "playerSetsSpeedModifier" | "playerHighFives" | "spaceStopsSound" | "hipToBeSquare" | "playerCrafts" | "playerTriggersInventoryItem" | "playerSetsAllowScreenPointer" | "precomputedEnterLocation" | "gotRequestMute" | "playerSetsDeskInfo" | "mapSetNooks" | "dynamicGates" | "playerWaves" | "playerSetsPronouns" | "playerSetsTitle" | "playerSetsTimezone" | "playerSetsDescription" | "playerSetsPhone" | "playerSetsPersonalImageUrl" | "playerSetsProfileImageUrl" | "spaceSetsCapacity" | "spaceOverCapacityDeniesUser" | "playerSetsAway" | "mapSetCollisionsBits" | "playerSetsCity" | "playerSetsCountry" | "playerSetsStartDate" | "playerStartsRecording" | "accessRequestsUpdated" | "accessRequestRespondedTo" | "spaceSetsGuestPassStatuses" | "playerSetsAvailability" | "subscriptionsUpdated" | "spaceRolePermissionOverrideUpdated" | "playerSetsLastRaisedHand" | "playerSetsCurrentlyEquippedWearables" | "playerSetsDisplayEmail" | "mapDeleteObjectByKey" | "mapSetObjectsV2" | "playerInteractsWithObject" | "playerTriggersObject" | "chimeSetsUserInfo" | "playerChangesMaps", (data, _context) => {
+    console.log(`Sasha [Event] "${event}"`, data);
+  });
+});
+
 // print game events
 // game.subscribeToEvent("playerMoves", (data, _context) => {
 //   console.log('[Event] "move"', data);
 // });
+
 game.subscribeToEvent("playerJoins", async (data, _context) => {
   if (data.playerJoins.encId == 1) {
     // This is the authed player!
@@ -92,9 +138,10 @@ game.subscribeToEvent("playerChats", async (data, _context) => {
         game.move(MoveDirection.Right);
         break;
       case "dance":
+        // IF THE SENTIMENT SPARKS JOY IN BOT, THEN DANCE
         game.move(MoveDirection.Dance);
         break;
-      default:
+      default: 
         const completion = await chatCompletion(message.contents);
         game.chat(message.senderId, [], "", { contents: `${completion.message.content}` });
     }
@@ -126,3 +173,9 @@ setTimeout(() => {
   }
   // });
 }, 2000); // wait two seconds before setting these just to give the game a chance to init
+
+// setInterval(() => {
+//   const directions = [MoveDirection.Up, MoveDirection.Down, MoveDirection.Left, MoveDirection.Right];
+//   const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+//   game.move(randomDirection);
+// }, 2000);

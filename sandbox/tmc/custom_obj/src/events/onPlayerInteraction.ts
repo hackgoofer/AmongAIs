@@ -1,4 +1,4 @@
-import { ServerClientEventByCase, ServerClientEventContext } from "@gathertown/gather-game-client"
+import { ServerClientEventCase, ServerClientEventEvent } from "@gathertown/gather-game-client"
 import { mirrorObjId, updateUserStatusWithRandomTitle } from "../interactions/titleGenerator"
 import { boardObjId, updateCounterBoardObject } from "../interactions/counterBoard"
 import { jukeboxObjId, playRandomMusic } from "../interactions/jukebox"
@@ -14,10 +14,10 @@ const actionsByObjectId: Record<string, Function> = {
   [rankInfoObjectId] : updateMovementRanking
 }
 
-export function onPlayerInteraction (data: ServerClientEventByCase<'playerInteracts'>, context: ServerClientEventContext) {
+export function onPlayerInteraction(data: { $case: "playerInteractsWithObject"; playerInteractsWithObject: any; }, context: any) {
   const player = context?.player
   const playerName = player?.name
-  const interactedObjId = data.playerInteracts.objId
+  const interactedObjId = data.playerInteractsWithObject.objId
   console.log(`${playerName} interacted with objId: ${interactedObjId}`)
 
   const action = actionsByObjectId[interactedObjId]
