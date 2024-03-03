@@ -142,11 +142,12 @@ let objects: ObjectHolder = {};
 game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
   const playerInteractsWithObject = obj.playerInteractsWithObject;
   const objectKey = playerInteractsWithObject["key"]
+  //const objInfo = context.map!.objects[objectKey];
 
-  // check removeOnInteract:
-  if (context.map!.objects[objectKey].properties.removeOnInteract) {
+  // check if removeOnInteract is a key in properties
+  if (context.map!.objects[objectKey]!.properties && context.map!.objects[objectKey].properties.removeOnInteract) {
     removeItem(objectKey);
-    // TODO: add to inv
+    // TODO: add to inventory:
     return;
   }
 
@@ -434,12 +435,11 @@ setTimeout(() => {
   // });
 }, 4000); // wait two seconds before setting these just to give the game a chance to init
 
+const NUM_ITEMS = 4;
 enum ItemType {
   Rock,
-  Water,
-  SiameseCat,
-  Cat,
-  Fire,
+  Fern,
+  Fish,
   Unknown,
 }
 
@@ -447,16 +447,24 @@ const ItemAssets = {
   [ItemType.Rock]: {
     normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4",
   },
-  [ItemType.Cat]: {
-    normal: "https://replicate.delivery/pbxt/fit8ofEuUXoMfpEEFx35r7yMkiLfXadqmfI5tMxBskVvtTlTC/output.png",
+  [ItemType.Fern]: {
+    normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/Grn8wFtXU3f7PiYOS4Yp4",
+  },
+  [ItemType.Fish]: {
+    normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/yui1plkt7r0MFbdYS2IUL",
   },
 }
 
 function randomItemType(): ItemType {
-  return Math.random() < 0.5 ? ItemType.Rock : ItemType.Cat;
+  // return random int between 0 and 4, inclusive:
+  return Math.floor(Math.random() * NUM_ITEMS);
 }
 
 function addItem(itemType: ItemType, player: Partial<Player>) {
+  if (!ItemAssets[itemType]) {
+    console.error("Unknown item type", itemType);
+    itemType = ItemType.Rock;
+  }
   const id = Math.random().toString(36).substring(7);
   // add near player:
   const x = jitter(player.x! || game.players[CurrentPlayerId].x, 3);
@@ -480,7 +488,6 @@ function addItem(itemType: ItemType, player: Partial<Player>) {
     height: 1,
     distThreshold: 2,
     properties: {
-      message: `${itemType}`,
       itemType: `${itemType}`,
       removeOnInteract: true,
     },
