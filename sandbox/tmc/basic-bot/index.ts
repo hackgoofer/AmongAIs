@@ -165,7 +165,6 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
     console.log("added inventory: " + objectKey);
   }
   console.log("added inventory: " + objectKey)
-  addItem(randomItemType(), context.player!);
   console.log("end inventory")
   console.log(context.player!.inventory)
 
@@ -175,6 +174,7 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
     return;
   }
 
+  addItem(randomItemType(), context.player!);
 
   // if(playerTriggersItem.closestObjectTemplate && playerTriggersItem.closestObjectTemplate === "Special Object"){
   //     let {mapId, obj} = game.getObject(playerTriggersItem.closestObject!)!;
