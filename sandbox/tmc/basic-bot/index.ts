@@ -144,13 +144,6 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
   const objectKey = playerInteractsWithObject["key"]
   //const objInfo = context.map!.objects[objectKey];
 
-  // check if removeOnInteract is a key in properties
-  if (context.map!.objects[objectKey]!.properties && context.map!.objects[objectKey].properties.removeOnInteract) {
-    removeItem(objectKey);
-    // TODO: add to inventory:
-    return;
-  }
-
   if (context.player!.itemString && objects[context.playerId!]) {
     let temp = objects[context.playerId!]
     let newObj = {
@@ -175,6 +168,13 @@ game.subscribeToEvent("playerInteractsWithObject", async (obj, context) => {
   addItem(randomItemType(), context.player!);
   console.log("end inventory")
   console.log(context.player!.inventory)
+
+  // check if removeOnInteract is a key in properties
+  if (context.map!.objects[objectKey]!.properties && context.map!.objects[objectKey].properties.removeOnInteract) {
+    removeItem(objectKey);
+    return;
+  }
+
 
   // if(playerTriggersItem.closestObjectTemplate && playerTriggersItem.closestObjectTemplate === "Special Object"){
   //     let {mapId, obj} = game.getObject(playerTriggersItem.closestObject!)!;
@@ -479,7 +479,7 @@ function addItem(itemType: ItemType, player: Partial<Player>) {
   game.addObject(`${GATHER_MAP_ID}`, {
     _tags: [],
     // templateId: "Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj",
-    _name: "new item",
+    _name: `${ItemType[itemType]}`,
     x: x,
     y: y,
     offsetX: 31.533918380737305,
