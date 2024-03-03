@@ -426,11 +426,9 @@ setTimeout(() => {
 }, 4000); // wait two seconds before setting these just to give the game a chance to init
 
 function addRock() {
-  // SYSTEM [Event] "mapSetObjectsV2" {"$case":"mapSetObjectsV2","mapSetObjectsV2":{"mapId":"office-space-medium","objects":{"ZhmO":{"_tags":["nature","rock"],"templateId":"Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj","_name":"Rock (1x1)","x":156,"y":119,"offsetX":8.535205841064453,"offsetY":5.5401530265808105,"color":"#9193A6","orientation":0,"normal":"https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4","highlighted":"","type":0,"width":1,"height":1,"propertiesJson":"{}","id":"Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj_a3e1db1b-2493-42f5-980c-44434bcbe79a","objectPlacerId":"xV7RhU1LRwblooI5w77PY8aQIZD3","zIndex":805}},"updatesAreOverwrites":true}}
-  // genearte random 4 char string id:
-  const id = Math.random().toString(36).substring(2, 6);
-  const x = jitter(155, 10);
-  const y = jitter(119, 10);
+  // add near player:
+  const x = jitter(game.players[CurrentPlayerId].x, 3);
+  const y = jitter(game.players[CurrentPlayerId].y, 3);
   game.addObject(`${GATHER_MAP_ID}`, {
     _tags: ["nature", "rock"],
     templateId: "Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj",
