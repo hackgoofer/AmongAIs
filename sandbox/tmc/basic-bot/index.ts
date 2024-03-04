@@ -107,7 +107,7 @@ async function chatCompletion(input: string, inventory_items: string[] = []) {
     me!.inventory.items["newId"+ new_item.name] = mynewobject
 
     // If we want to drop it, we need a CDN-working image and to call: addItem(randomItemType(), me!);
-    addItem(ItemType.AndroidCat, me!);
+    addItem(ItemType.AGICat, me!);
 
 
     // synthesize alt response
@@ -445,7 +445,7 @@ enum ItemType {
   Fern,
   Fish,
   Wine,
-  AndroidCat,
+  AGICat,
 }
 
 const ItemAssets = {
@@ -461,7 +461,7 @@ const ItemAssets = {
   [ItemType.Wine]: {
     normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/iNeqoBHsVind3FPKlBm_k",
   },
-  [ItemType.AndroidCat]: {
+  [ItemType.AGICat]: {
     normal: "https://replicate.delivery/pbxt/1l3JNkivUpLsMFnZS7CWx4xTovvnKpA3Ikhyra8OzewcnVOJA/output.png",
   }
 }
