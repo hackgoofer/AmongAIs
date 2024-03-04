@@ -462,7 +462,7 @@ const ItemAssets = {
     normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/iNeqoBHsVind3FPKlBm_k",
   },
   [ItemType.AGICat]: {
-    normal: "https://replicate.delivery/pbxt/1l3JNkivUpLsMFnZS7CWx4xTovvnKpA3Ikhyra8OzewcnVOJA/output.png",
+    normal: "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/5Pz9ficEXwSe4AYOkX7w8d",
   }
 }
 
@@ -552,7 +552,7 @@ function initializeGameState() {
   const elements: { [id: string]: MapObject } = {
     "cat": createMapObject("Cat1x1 - r3WuvM6QzzI9XLBUe6Rtj", "CAT", ["animal", "cat"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/OG412cvS9W1jYefT1CcoM9"),
     "rock": createMapObject("Rock1x1 - r3WuvM6QzzI9XLBUe6Rtj", "ROCK", ["nature", "rock"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/4wZELNUIgjgSyi-jQiCT4"),
-    "metal": createMapObject("Metal1x1 - r3WuvM6QzzI9XLBUe6Rtj", "METAL", ["metal"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/GabCBoR5H1MUQKOZpHIhab"),
+    "AI": createMapObject("Metal1x1 - r3WuvM6QzzI9XLBUe6Rtj", "AI", ["ai"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/GabCBoR5H1MUQKOZpHIhab"),
     "earth": createMapObject("Earth1x1 - r3WuvM6QzzI9XLBUe6Rtj", "EARTH", ["earth"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/wiPxBnKS4wELTY0Y3mOQUN"),
     "fire": createMapObject("Fire1x1 - r3WuvM6QzzI9XLBUe6Rtj", "FIRE", ["fire"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/uploads/Pliup4gqrF7l4Ypa/F6I2zufurOkrObFcSGFWTZ"),
     "heart": createMapObject("Heart1x1 - r3WuvM6QzzI9XLBUe6Rtj", "HEART", ["heart"], "https://cdn.gather.town/storage.googleapis.com/gather-town.appspot.com/internal-dashboard/images/IXZYPsbDLyi-phXFmdEne")
